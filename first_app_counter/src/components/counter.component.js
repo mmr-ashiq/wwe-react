@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 class Counter extends Component {
 	state = {
-		count: 0,
+		count: 1,
 	};
 
 	handleIncrement = () => {
@@ -14,18 +14,18 @@ class Counter extends Component {
 
 	handleDecrement = () => {
 		const { count } = this.state;
-		if (count > 0) this.setState({ count: count - 1 });
+		if (count > 1) this.setState({ count: count - 1 });
 	};
 
 	handleReset = () => {
-		this.setState({ count: 0 });
+		this.setState({ count: 1 });
 	};
 
 	render() {
 		return (
 			<>
 				<div className="container border border-success rounded mt-4">
-					<h1 className='text-center'>Counter App</h1>
+					<h1 className='text-center'>E-commerce Cart Replica</h1>
 					<button className="btn btn-primary" onClick={this.handleIncrement}>
 						+
 					</button>
@@ -33,8 +33,11 @@ class Counter extends Component {
 					<button className="btn btn-primary" onClick={this.handleDecrement}>
 						-
 					</button>
-					<button className="btn btn-danger m-4" onClick={this.handleReset}>
+					<button className="btn btn-info m-2" onClick={this.handleReset}>
 						Reset
+					</button>
+					<button className="btn btn-danger m-2" onClick={this.handleReset}>
+						Remove
 					</button>
 				</div>
 			</>
