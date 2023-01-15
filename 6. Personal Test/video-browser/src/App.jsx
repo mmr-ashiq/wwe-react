@@ -1,6 +1,9 @@
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { Component } from 'react';
+import SearchBar from './components/SearchBar';
+import VideoDetail from './components/VideoDetail';
+import VideoList from './components/VideoList';
 import './css/video__list__item.css';
 
 export class App extends Component {
@@ -12,111 +15,46 @@ export class App extends Component {
 		description: '',
 	};
 
-	handleChange = (event) => {
-		const value = event.target.value;
-		const newState = { ...this.state, searchTerm: value };
-		
-		this.setState(newState);
-	};
+	handleChange = ({ target: { value: searchTerm } }) =>
+		this.setState({ ...this.state, searchTerm });
 
-	handleSelect = (videoId) => {
-		const newState = { ...this.state, videoId: videoId, title: title, description: description };
-		
-		this.setState(newState);
-	};
+	handleSelect = (videoId, title, description) =>
+		this.setState({ ...this.state, videoId, title, description });
 
 	componentDidUpdate(prevProps, prevState) {
 		const getYoutubeVideos = () => {
-			const url = 'https://www.googleapis.com/youtube/v3/search';
-			const key = 'AIzaSyDsJelC5N2sDsB_1l1T5YHF4nTr6ZxLVJc';
+			const url = "https://www.googleapis.com/youtube/v3/search";
+			const key = "AIzaSyDRYnLieH9Xv8urb8_67J4G1CTNZXYFNkM";
 			const type = 'video';
 			const part = 'snippet';
 			const q = this.state.searchTerm;
 
 			const targetUrl = `${url}?key=${key}&type=${type}&part=${part}&q=${q}`;
 
-			const promise = axios.get(targetUrl);
-
-			const success = (response) => {
-				console.log('successfull');
-				console.log(response.data);
-
-				const newState = { ...this.state, data: response.data };
-					
-				this.setState(newState);
-			};
-
-			const error = (error) => {
-				console.log('error');
-				console.log(error);
-			};
-
-			promise.then(success).catch(error);
+			axios
+				.get(targetUrl)
+				.then((response) =>
+					this.setState({ ...this.state, data: response.data })
+				)
+				.catch((error) => console.log(error));
 		};
 
 		if (prevState.searchTerm !== this.state.searchTerm) getYoutubeVideos();
 	}
 
 	render() {
-		const items = this.state.data.items || [];
-
 		return (
 			<div className="container">
-				<div className="d-flex justify-content-center">
-					<input
-						type="text"
-						onChange={this.handleChange}
-						className="m-2 p-2 w-75 border border-success border-opacity-25 shadow-sm"
-					/>
-					{/* <button type="button" className="btn btn-outline-secondary" onClick={this.handleChange} style={{fontSize: '1rem' }}>Search</button> */}
-					<br />
-				</div>
+				<SearchBar handleChange={this.state.handleChange} />
 
 				<div className="row">
-					<div className="col-md-8 mt-4">
-						<div className="embed-responsive embed-responsive-16by9">
-							<iframe
-								style={{ width: '100%', height: '480px' }}
-								src={`https://www.youtube.com/embed/${this.state.videoId}`}
-								// src={`https://www.youtube.com/embed/ILamw3XTp-U`}
-								allowFullScreen
-							></iframe>
-						</div>
-						<div className="details border border-success p-2 mb-2 border-opacity-25">
-							<h3>{this.state.title}</h3>
-							<p>{this.state.description}</p>
-						</div>
-					</div>
+					<VideoDetail
+						videoId={this.state.videoId}
+						title={this.state.title}
+						description={this.state.description}
+					/>
 
-					<div className="col-md-4 mt-4 border border-secondary-subtle">
-						<ul className="list-group">
-							{items.map((item) => {
-								const imgUrl =
-									item.snippet.thumbnails.default.url;
-								const title = item.snippet.title;
-								const description = item.snippet.description;
-								const videoId = item.id.videoId;
-
-								return (
-									<li
-										onClick={(event) => {
-											this.handleSelect(
-												videoId,
-												title,
-												description
-											);
-										}}
-										className="list-group-item media border border-info-subtle media rounded video__list__item m-2 p-1"
-									>
-										<img className="mr-3" src={imgUrl} />
-										<div className="media-body">
-											<h6>{title}</h6>
-										</div>
-									</li>
-								);
-							})}
-						</ul>
-					</div>
+					<VideoList items={this.state.data.items || []} handleSelect={this.state.handleSelect} />
 				</div>
 			</div>
 		);

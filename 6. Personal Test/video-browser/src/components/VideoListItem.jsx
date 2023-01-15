@@ -3,15 +3,23 @@ import '../css/video__list__item.css';
 
 export class VideoListItem extends Component {
 	render() {
-		const { imgSrc, songName, viewsDate } = this.props;
+		const { videoId, title, description, imgUrl, handleSelect } = this.props;
 
 		return (
 			<div className="border border-info-subtle media rounded video__list__item m-2 p-1">
-				<img src={imgSrc} alt="" className="rounded" />
-				<div className="media-body ms-2">
-					<h6>{songName} </h6>
-					<p>{viewsDate}</p>
-				</div>
+				<li
+					onClick={() => {
+						this.handleSelect(
+							videoId,
+							title,
+							description
+						);
+					}}
+					className="list-group-item media border border-info-subtle media rounded video__list__item m-2 p-1"
+				>
+					<img className="mr-3" src={imgUrl} />
+					<div className="media-body"><h6>{title}</h6></div>
+				</li>
 			</div>
 		);
 	}
